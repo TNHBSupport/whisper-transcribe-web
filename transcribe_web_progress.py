@@ -65,7 +65,9 @@ _ACTIVE_JOB_LOCK = threading.Lock()
 # Optional safety mode. Set WSL_SAFE_MODE=1 to force CPU.
 WSL_SAFE_MODE = os.environ.get("WSL_SAFE_MODE", "0") == "1"
 WHISPER_CUDA_COMPUTE_TYPE = os.environ.get("WHISPER_CUDA_COMPUTE_TYPE", "int8_float16")
-LOG_ROOT_DIR = Path(os.environ.get("TRANSCRIBE_LOG_DIR", "/mnt/e/transcribe_logs"))
+LOG_ROOT_DIR = Path(
+    os.environ.get("TRANSCRIBE_LOG_DIR", str((Path.cwd() / "transcribe_logs").resolve()))
+).resolve()
 TRANSCRIBE_CHUNK_SECONDS = max(300, int(os.environ.get("TRANSCRIBE_CHUNK_SECONDS", "1800")))
 INSTANCE_LOCK_PATH = Path(os.environ.get("TRANSCRIBE_INSTANCE_LOCK", "/tmp/transcribe_web_progress.lock"))
 _INSTANCE_LOCK_FP = None
@@ -721,4 +723,4 @@ if __name__ == "__main__":
     acquire_instance_lock()
     apply_runtime_limits()
     demo.queue(default_concurrency_limit=1)
-    demo.launch()
+    demo.launch(allowed_paths=[str(LOG_ROOT_DIR)])

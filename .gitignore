@@ -1,0 +1,3 @@
+.venv/
+transcribe_logs/
+*.log
